@@ -1,0 +1,114 @@
+/* Additional CSS styles for Squirrel Dash */
+
+/* Global animations */
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Game-specific styles */
+.game-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.score-animation {
+    animation: pulse 0.5s ease-in-out;
+}
+
+.collision-animation {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .ui-panel {
+        font-size: 0.9rem;
+    }
+
+    .score-value {
+        font-size: 1.5rem;
+    }
+
+    .control-keys {
+        font-size: 0.8rem;
+    }
+}
+
+/* Loading screen enhancements */
+.loading-screen {
+    background: linear-gradient(135deg, #1a2f0a, #2d5016);
+}
+
+.loading-spinner {
+    border-color: rgba(255, 215, 0, 0.3);
+    border-top-color: #ffd700;
+}
+
+/* Game over panel enhancements */
+.game-over-panel {
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Button hover effects */
+.play-button:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* Score display enhancements */
+.score-value {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Control key styling */
+.key {
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive design improvements */
+@media (max-width: 480px) {
+    .ui-panel {
+        padding: 15px;
+    }
+
+    .score-panel {
+        min-width: 120px;
+    }
+
+    .control-keys {
+        gap: 8px;
+    }
+
+    .key {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}

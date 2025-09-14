@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Leaderboard - Squirrel Dash</title>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d5016, #4a7c59);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            border: none;
+            padding: 12px 25px;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+            font-size: 16px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-3px);
+        }
+
+        .leaderboard {
+            margin-top: 40px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(10px);
+        }
+
+        .rank {
+            font-size: 2rem;
+            font-weight: bold;
+            width: 80px;
+            text-align: center;
+            margin-right: 20px;
+        }
+
+        .rank.gold { color: #ffd700; }
+        .rank.silver { color: #c0c0c0; }
+        .rank.bronze { color: #cd7f32; }
+
+        .player-info {
+            flex-grow: 1;
+        }
+
+        .player-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .player-details {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .leaderboard-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .rank {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .score {
+                text-align: center;
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🏆 LEADERBOARD</h1>
+                <p class="subtitle">Top Branch Runners of All Time</p>
+                <div class="nav-buttons">
+                    <a href="/" class="nav-button">🏠 Home</a>
+                    <a href="/game" class="nav-button">🎮 Play Now</a>
+                    <button onclick="refreshLeaderboard()" class="nav-button">🔄
+                        Refresh</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-label">Total Players</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">89,432</div>
+                    <div class="stat-label">Games Played</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2.3M</div>
+                    <div class="stat-label">Acorns Collected</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">456km</div>
+                    <div class="stat-label">Distance Traveled</div>
+                </div>
+            </div>
+
+            <div class="leaderboard">
+                {% if scores %}
+                {% for player in scores %}
+                <div class="leaderboard-item">
+                    <div
+                        class="rank {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                        {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{%
+                        elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{%
+                        endif %}
+                    </div>
+                    <div class="player-info">
+                        <div class="player-name">{{ player.name }}</div>
+                        <div class="player-details">
+                            Distance: {{ (player.score / 10)|int }}m •
+                            Acorns: {{ (player.score / 150)|int }}
+                        </div>
+                    </div>
+                    <div class="score">{{ "{:,}".format(player.score) }}</div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="empty-state">
+                    <div>🐿️</div>
+                    <h3>No scores yet!</h3>
+                    <p>Be the first to set a record on the branch highway.</p>
+                    <a href="/game" class="nav-button"
+                        style="margin-top: 20px;">Start Your Run</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; opacity: 0.7;">
+                <p>Scores update in real-time. Challenge your friends!</p>
+                <p style="font-size: 0.9rem; margin-top: 10px;">🌳 Every branch
+                    tells a story • 🥜 Every acorn counts • 🏃‍♂️ Every run
+                    matters</p>
+            </div>
+        </div>
+
+        <script>
+        function refreshLeaderboard() {
+            fetch('/api/get-scores')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the leaderboard dynamically
+                    location.reload(); // Simple reload for now
+                })
+                .catch(error => console.error('Error fetching scores:', error));
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(refreshLeaderboard, 30000);
+    </script>
+    </body>
+</html>
