@@ -511,7 +511,7 @@
         let comboTime = 0;
         let timeOfDay = 0;
         let cameraShake = { x: 0, y: 0, z: 0 };
-        let cameraTarget = { x: 0, y: 5, z: 10 };
+        let cameraTarget = { x: 0, y: 2, z: 8 };
         let sun, moon, stars, skybox, sky;
         let windDirection = new THREE.Vector3(1, 0, 0);
         let windStrength = 0.5;
@@ -725,7 +725,8 @@
                 
                 // Create scene
                 scene = new THREE.Scene();
-                scene.fog = new THREE.FogExp2(0x87ceeb, 0.01);
+                // Forest atmosphere with green-tinted fog
+                scene.fog = new THREE.FogExp2(0x4a7c59, 0.008);
                 
                 // Create camera
                 camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -998,8 +999,21 @@
         }
 
         function createEnhancedGround() {
+            // Create forest floor with moss and fallen leaves
+            const forestFloorGeometry = new THREE.PlaneGeometry(100, 100);
+            const forestFloorMaterial = new THREE.MeshStandardMaterial({
+                color: 0x2d5016,
+                roughness: 0.9,
+                metalness: 0.0
+            });
+            const forestFloor = new THREE.Mesh(forestFloorGeometry, forestFloorMaterial);
+            forestFloor.rotation.x = -Math.PI / 2;
+            forestFloor.position.y = -3;
+            forestFloor.receiveShadow = true;
+            scene.add(forestFloor);
+
             // Create multiple branch segments with varying materials
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 30; i++) {
                 const branchGroup = new THREE.Group();
                 
                 // Main branch
@@ -1010,7 +1024,7 @@
                     8
                 );
                 const branchMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x8B4513,
+                    color: new THREE.Color().setHSL(0.1, 0.4, 0.3 + Math.random() * 0.2),
                     roughness: 0.8,
                     metalness: 0.1,
                     normalScale: new THREE.Vector2(0.5, 0.5)
@@ -1067,8 +1081,8 @@
         function createEnhancedSquirrel() {
             const squirrelGroup = new THREE.Group();
 
-            // Enhanced body with PBR material
-            const bodyGeometry = new THREE.SphereGeometry(0.5, 12, 8);
+            // Enhanced body with PBR material - smaller for forest scale
+            const bodyGeometry = new THREE.SphereGeometry(0.4, 12, 8);
             const bodyMaterial = new THREE.MeshStandardMaterial({
                 color: 0x8B4513,
                 roughness: 0.7,
@@ -1076,67 +1090,86 @@
                 normalScale: new THREE.Vector2(0.5, 0.5)
             });
             const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-            body.position.y = 0.5;
+            body.position.y = 0.4;
             body.castShadow = true;
             squirrelGroup.add(body);
 
-            // Enhanced head
-            const headGeometry = new THREE.SphereGeometry(0.3, 12, 8);
+            // Enhanced head - smaller and more proportional
+            const headGeometry = new THREE.SphereGeometry(0.25, 12, 8);
             const head = new THREE.Mesh(headGeometry, bodyMaterial);
-            head.position.set(0, 1.2, 0.2);
+            head.position.set(0, 1.0, 0.15);
             head.castShadow = true;
             squirrelGroup.add(head);
 
-            // Enhanced tail
-            const tailGeometry = new THREE.ConeGeometry(0.2, 1, 8);
+            // Enhanced tail - much smaller and more realistic
+            const tailGeometry = new THREE.ConeGeometry(0.12, 0.6, 8);
             const tailMaterial = new THREE.MeshStandardMaterial({
                 color: 0x654321,
                 roughness: 0.9,
                 metalness: 0.0
             });
             const tail = new THREE.Mesh(tailGeometry, tailMaterial);
-            tail.position.set(0, 0.8, -0.8);
-            tail.rotation.x = Math.PI / 4;
+            tail.position.set(0, 0.6, -0.5);
+            tail.rotation.x = Math.PI / 6; // Less dramatic angle
             tail.castShadow = true;
             squirrelGroup.add(tail);
 
-            // Add eyes
-            const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 6);
+            // Add ears for more forest creature feel
+            const earGeometry = new THREE.ConeGeometry(0.08, 0.15, 6);
+            const earMaterial = new THREE.MeshStandardMaterial({
+                color: 0x8B4513,
+                roughness: 0.8
+            });
+            const leftEar = new THREE.Mesh(earGeometry, earMaterial);
+            const rightEar = new THREE.Mesh(earGeometry, earMaterial);
+            leftEar.position.set(-0.15, 1.15, 0.1);
+            rightEar.position.set(0.15, 1.15, 0.1);
+            leftEar.rotation.z = -0.3;
+            rightEar.rotation.z = 0.3;
+            squirrelGroup.add(leftEar);
+            squirrelGroup.add(rightEar);
+
+            // Add eyes - smaller and more realistic
+            const eyeGeometry = new THREE.SphereGeometry(0.03, 8, 6);
             const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
             const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
             const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            leftEye.position.set(-0.1, 1.3, 0.4);
-            rightEye.position.set(0.1, 1.3, 0.4);
+            leftEye.position.set(-0.08, 1.05, 0.3);
+            rightEye.position.set(0.08, 1.05, 0.3);
             squirrelGroup.add(leftEye);
             squirrelGroup.add(rightEye);
 
-            squirrelGroup.position.set(0, 0, 0);
+            // Position squirrel lower on screen for better forest perspective
+            squirrelGroup.position.set(0, -1.5, 0);
             squirrel = squirrelGroup;
             scene.add(squirrel);
         }
 
         function createParticleSystems() {
-            // Floating leaves particle system
-            const leafGeometry = new THREE.PlaneGeometry(0.1, 0.1);
-            const leafMaterial = new THREE.MeshStandardMaterial({
-                color: 0x8B4513,
-                transparent: true,
-                opacity: 0.7,
-                side: THREE.DoubleSide
-            });
-
-            for (let i = 0; i < 50; i++) {
+            // Floating leaves particle system - more forest colors
+            const leafGeometry = new THREE.PlaneGeometry(0.08, 0.12);
+            const leafColors = [0x8B4513, 0x654321, 0x4a7c59, 0x2d5016, 0x8FBC8F];
+            
+            for (let i = 0; i < 80; i++) {
+                const leafMaterial = new THREE.MeshStandardMaterial({
+                    color: leafColors[Math.floor(Math.random() * leafColors.length)],
+                    transparent: true,
+                    opacity: 0.6 + Math.random() * 0.3,
+                    side: THREE.DoubleSide
+                });
+                
                 const leaf = new THREE.Mesh(leafGeometry, leafMaterial);
                 leaf.position.set(
-                    (Math.random() - 0.5) * 100,
-                    Math.random() * 20 + 5,
-                    (Math.random() - 0.5) * 100
+                    (Math.random() - 0.5) * 120,
+                    Math.random() * 25 + 3,
+                    (Math.random() - 0.5) * 120
                 );
                 leaf.rotation.set(
                     Math.random() * Math.PI,
                     Math.random() * Math.PI,
                     Math.random() * Math.PI
                 );
+                leaf.scale.setScalar(0.5 + Math.random() * 0.5);
                 particles.push(leaf);
                 scene.add(leaf);
             }
