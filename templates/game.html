@@ -716,6 +716,11 @@
 
         function createPostProcessing() {
             try {
+                // Check if post-processing modules are available
+                if (typeof THREE.EffectComposer === 'undefined') {
+                    throw new Error('EffectComposer not loaded - the squirrels are confused! 🐿️');
+                }
+                
                 // Create effect composer
                 composer = new THREE.EffectComposer(renderer);
 
@@ -723,44 +728,63 @@
                 const renderPass = new THREE.RenderPass(scene, camera);
                 composer.addPass(renderPass);
 
-                // Add bloom pass for magical effects
-                const bloomPass = new THREE.UnrealBloomPass(
-                    new THREE.Vector2(window.innerWidth, window.innerHeight),
-                    bloomParams.bloomStrength,
-                    bloomParams.bloomRadius,
-                    bloomParams.bloomThreshold
-                );
-                composer.addPass(bloomPass);
+                // Try to add bloom pass (optional)
+                try {
+                    if (typeof THREE.UnrealBloomPass !== 'undefined') {
+                        const bloomPass = new THREE.UnrealBloomPass(
+                            new THREE.Vector2(window.innerWidth, window.innerHeight),
+                            bloomParams.bloomStrength,
+                            bloomParams.bloomRadius,
+                            bloomParams.bloomThreshold
+                        );
+                        composer.addPass(bloomPass);
+                    }
+                } catch (bloomError) {
+                    console.warn('Bloom pass failed - the forest is less sparkly! ✨', bloomError);
+                }
 
-                // Add SSAO for realistic depth
-                const ssaoPass = new THREE.SSAOPass(
-                    scene,
-                    camera,
-                    window.innerWidth,
-                    window.innerHeight
-                );
-                ssaoPass.kernelRadius = 8;
-                ssaoPass.minDistance = 0.005;
-                ssaoPass.maxDistance = 0.1;
-                composer.addPass(ssaoPass);
+                // Try to add SSAO (optional)
+                try {
+                    if (typeof THREE.SSAOPass !== 'undefined') {
+                        const ssaoPass = new THREE.SSAOPass(
+                            scene,
+                            camera,
+                            window.innerWidth,
+                            window.innerHeight
+                        );
+                        ssaoPass.kernelRadius = 8;
+                        ssaoPass.minDistance = 0.005;
+                        ssaoPass.maxDistance = 0.1;
+                        composer.addPass(ssaoPass);
+                    }
+                } catch (ssaoError) {
+                    console.warn('SSAO pass failed - the shadows are hiding! 🌑', ssaoError);
+                }
 
-                // Add FXAA for anti-aliasing
-                const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
-                fxaaPass.material.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
-                composer.addPass(fxaaPass);
+                // Try to add FXAA (optional)
+                try {
+                    if (typeof THREE.FXAAShader !== 'undefined') {
+                        const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
+                        fxaaPass.material.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+                        composer.addPass(fxaaPass);
+                    }
+                } catch (fxaaError) {
+                    console.warn('FXAA pass failed - the edges are a bit jagged! 📐', fxaaError);
+                }
 
                 // Set final pass
-                composer.passes[composer.passes.length - 1].renderToScreen = true;
+                if (composer.passes.length > 1) {
+                    composer.passes[composer.passes.length - 1].renderToScreen = true;
+                }
+                
             } catch (error) {
-                console.warn('Post-processing not available:', error);
+                console.warn('Post-processing failed - falling back to basic rendering! The squirrels are still happy! 🐿️', error);
                 // Fallback to basic rendering
                 composer = null;
             }
         }
 
         function createEnhancedLighting() {
-            createEnhancedLighting();
-
             // Create realistic sky
             createRealisticSky();
 
