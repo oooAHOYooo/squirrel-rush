@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Play Squirrel Rush - 3D Endless Runner</title>
+        <title>Play Squirrel Dash - 3D Endless Runner</title>
         <style>
         * {
             margin: 0;
@@ -154,7 +154,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            background: linear-gradient(135deg, #1a2f0a, #2d5016);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -166,7 +166,7 @@
             width: 50px;
             height: 50px;
             border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid #00ffff;
+            border-top: 3px solid #ffd700;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
@@ -180,62 +180,6 @@
         .loading-text {
             font-size: 1.2rem;
             opacity: 0.8;
-            margin-bottom: 20px;
-        }
-
-        .progress-container {
-            width: 300px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #00ffff, #ff00ff);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .loading-status {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-bottom: 10px;
-        }
-
-        .debug-info {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: #00ffff;
-            max-width: 300px;
-            display: none;
-        }
-
-        .error-message {
-            color: #ff0000;
-            background: rgba(255, 0, 0, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .retry-button {
-            background: #ff00ff;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
         }
 
         .combo-display {
@@ -298,14 +242,6 @@
             100% { opacity: 0; }
         }
 
-        .gui-container {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 200;
-        }
-
         @media (max-width: 768px) {
             .ui-panel {
                 padding: 15px;
@@ -325,29 +261,18 @@
             }
 
             .key {
-                padding: 6px 10px;
-                font-size: 0.8rem;
+                padding: 8px 12px;
+                font-size: 0.9rem;
             }
         }
     </style>
     </head>
     <body>
         <div id="gameContainer">
-        <div class="loading-screen" id="loadingScreen">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Loading Squirrel Rush...</div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
+            <div class="loading-screen" id="loadingScreen">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Squirrel Dash...</div>
             </div>
-            <div class="loading-status" id="loadingStatus">Initializing...</div>
-            <div class="error-message" id="errorMessage"></div>
-            <button class="retry-button" id="retryButton" onclick="retryLoading()" style="display: none;">Retry</button>
-        </div>
-
-        <div class="debug-info" id="debugInfo">
-            <div>Debug Info:</div>
-            <div id="debugText">Loading...</div>
-        </div>
 
             <canvas id="gameCanvas"></canvas>
 
@@ -364,12 +289,6 @@
                             <span id="acorns">0</span></div>
                         <div style="font-size: 0.9rem; opacity: 0.8;">Combo:
                             <span id="combo">1x</span></div>
-                        <div style="font-size: 0.9rem; opacity: 0.8;">Coins:
-                            <span id="coins">0</span></div>
-                    </div>
-                    <div style="margin-top: 10px;">
-                        <button onclick="showShop()" style="padding: 5px 10px; background: #ff00ff; color: black; border: none; border-radius: 3px; font-size: 0.8rem;">Shop</button>
-                        <button onclick="showAd()" style="padding: 5px 10px; background: #00ffff; color: black; border: none; border-radius: 3px; font-size: 0.8rem; margin-left: 5px;">Watch Ad</button>
                     </div>
                 </div>
 
@@ -389,7 +308,7 @@
                 </div>
 
                 <div class="ui-panel game-over-panel" id="gameOverPanel">
-                    <h2 style="margin-bottom: 20px; color: #00ffff;">Game
+                    <h2 style="margin-bottom: 20px; color: #ffd700;">Game
                         Over!</h2>
                     <div style="font-size: 1.5rem; margin-bottom: 20px;">
                         Final Score: <span id="finalScore">0</span>
@@ -407,36 +326,10 @@
 
                 <div class="screen-flash" id="screenFlash"></div>
             </div>
-
-            <div class="gui-container" id="guiContainer"></div>
         </div>
 
-        <!-- Three.js Core -->
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-        <!-- Post-Processing -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/SSAOPass.js"></script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
-
-        <!-- Sky System -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Sky.js"></script>
-
-        <!-- Lil-GUI for real-time tweaking -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/lil-gui@0.18.2/dist/lil-gui.umd.min.js"></script>
-
         <script>
         // Enhanced Game variables
         let scene, camera, renderer, composer, squirrel, obstacles = [], acorns = [], particles = [];
@@ -451,312 +344,44 @@
         let jumpSpeed = 0;
         let combo = 1;
         let comboTime = 0;
-        let timeOfDay = 0;
+        let timeOfDay = 0; // 0 = dawn, 0.5 = noon, 1 = dusk
         let cameraShake = { x: 0, y: 0, z: 0 };
         let cameraTarget = { x: 0, y: 5, z: 10 };
-        let sun, moon, stars, skybox, sky;
+        let sun, moon, stars, skybox;
         let windDirection = new THREE.Vector3(1, 0, 0);
         let windStrength = 0.5;
-        let gui;
-
-        // Loading and error handling
-        let loadingProgress = 0;
-        let loadingSteps = [
-            'Initializing Three.js...',
-            'Creating scene and camera...',
-            'Setting up renderer...',
-            'Loading post-processing...',
-            'Creating lighting system...',
-            'Building sky system...',
-            'Generating terrain...',
-            'Creating squirrel character...',
-            'Setting up particle systems...',
-            'Configuring GUI...',
-            'Finalizing setup...'
-        ];
-        let currentStep = 0;
-        let loadingErrors = [];
-
-        // Monetization variables
-        let coins = 0;
-        let premiumFeatures = {
-            doubleCoins: false,
-            noAds: false,
-            specialSkins: false,
-            extraLives: 0
-        };
-        let adCooldown = 0;
-
-        // Post-processing parameters
-        const bloomParams = {
-            exposure: 1.0,
-            bloomStrength: 1.5,
-            bloomThreshold: 0.4,
-            bloomRadius: 0.4
-        };
-
-        // Loading and error handling functions
-        function updateLoadingProgress(step, message) {
-            currentStep = step;
-            loadingProgress = (step / loadingSteps.length) * 100;
-            
-            document.getElementById('progressBar').style.width = loadingProgress + '%';
-            document.getElementById('loadingStatus').textContent = message || loadingSteps[step];
-            
-            // Update debug info
-            const debugText = document.getElementById('debugText');
-            debugText.innerHTML = `
-                Step: ${step + 1}/${loadingSteps.length}<br>
-                Progress: ${Math.round(loadingProgress)}%<br>
-                Status: ${message || loadingSteps[step]}<br>
-                Errors: ${loadingErrors.length}
-            `;
-        }
-
-        function showError(message, error) {
-            loadingErrors.push({ message, error });
-            console.error('Loading Error:', message, error);
-            
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('retryButton').style.display = 'block';
-            
-            // Show debug info
-            document.getElementById('debugInfo').style.display = 'block';
-        }
-
-        function retryLoading() {
-            loadingErrors = [];
-            loadingProgress = 0;
-            currentStep = 0;
-            
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('retryButton').style.display = 'none';
-            document.getElementById('debugInfo').style.display = 'none';
-            
-            setTimeout(initGame, 1000);
-        }
-
-        // Monetization functions
-        function showAd() {
-            if (premiumFeatures.noAds) return Promise.resolve();
-            
-            return new Promise((resolve) => {
-                // Simulate ad display
-                const adOverlay = document.createElement('div');
-                adOverlay.style.cssText = `
-                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background: rgba(0,0,0,0.9); z-index: 1000; display: flex;
-                    align-items: center; justify-content: center; flex-direction: column;
-                `;
-                adOverlay.innerHTML = `
-                    <div style="color: white; font-size: 2rem; margin-bottom: 20px;">Advertisement</div>
-                    <div style="color: #ccc; margin-bottom: 20px;">Watch ad for 2x coins!</div>
-                    <button onclick="this.parentElement.remove(); resolve();" 
-                            style="padding: 10px 20px; background: #00ffff; color: black; border: none; border-radius: 5px;">
-                        Skip Ad
-                    </button>
-                `;
-                document.body.appendChild(adOverlay);
-                
-                // Auto-close after 3 seconds
-                setTimeout(() => {
-                    if (adOverlay.parentElement) {
-                        adOverlay.remove();
-                        resolve();
-                    }
-                }, 3000);
-            });
-        }
-
-        function showShop() {
-            const shopOverlay = document.createElement('div');
-            shopOverlay.style.cssText = `
-                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.9); z-index: 1000; display: flex;
-                align-items: center; justify-content: center;
-            `;
-            shopOverlay.innerHTML = `
-                <div style="background: #1a1a1a; padding: 30px; border-radius: 10px; color: white; max-width: 400px;">
-                    <h2 style="color: #00ffff; margin-bottom: 20px;">🐿️ Squirrel Rush Shop</h2>
-                    <div style="margin-bottom: 20px;">Coins: ${coins}</div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <button onclick="buyFeature('doubleCoins', 100)" 
-                                style="width: 100%; padding: 10px; background: #ff00ff; color: black; border: none; border-radius: 5px; margin-bottom: 5px;">
-                            Double Coins (100 coins)
-                        </button>
-                    </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <button onclick="buyFeature('noAds', 500)" 
-                                style="width: 100%; padding: 10px; background: #00ffff; color: black; border: none; border-radius: 5px; margin-bottom: 5px;">
-                            Remove Ads (500 coins)
-                        </button>
-                    </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <button onclick="buyFeature('specialSkins', 200)" 
-                                style="width: 100%; padding: 10px; background: #ffff00; color: black; border: none; border-radius: 5px; margin-bottom: 5px;">
-                            Special Skins (200 coins)
-                        </button>
-                    </div>
-                    
-                    <button onclick="this.parentElement.parentElement.remove()" 
-                            style="width: 100%; padding: 10px; background: #666; color: white; border: none; border-radius: 5px;">
-                        Close Shop
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(shopOverlay);
-        }
-
-        function buyFeature(feature, cost) {
-            if (coins >= cost) {
-                coins -= cost;
-                premiumFeatures[feature] = true;
-                alert(`Purchased ${feature} for ${cost} coins!`);
-                updateUI();
-            } else {
-                alert('Not enough coins!');
-            }
-        }
 
         // Initialize the enhanced game
         function initGame() {
-            try {
-                updateLoadingProgress(0, 'Initializing Three.js...');
-                
-                // Check if Three.js is loaded
-                if (typeof THREE === 'undefined') {
-                    throw new Error('Three.js failed to load');
-                }
-                
-                updateLoadingProgress(1, 'Creating scene and camera...');
-                
-                // Create scene
-                scene = new THREE.Scene();
-                scene.fog = new THREE.FogExp2(0x87ceeb, 0.01);
-                
-                // Create camera
-                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                camera.position.set(0, 5, 10);
-                
-                updateLoadingProgress(2, 'Setting up renderer...');
-                
-                // Create renderer with enhanced settings
-                renderer = new THREE.WebGLRenderer({ 
-                    canvas: document.getElementById('gameCanvas'), 
-                    antialias: true,
-                    powerPreference: "high-performance"
-                });
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.shadowMap.enabled = true;
-                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-                renderer.toneMapping = THREE.ACESFilmicToneMapping;
-                renderer.toneMappingExposure = 1.2;
-                renderer.outputEncoding = THREE.sRGBEncoding;
-                
-                updateLoadingProgress(3, 'Loading post-processing...');
-                
-                // Create post-processing pipeline
-                createPostProcessing();
-                
-                updateLoadingProgress(4, 'Creating lighting system...');
-                
-                // Create enhanced lighting
-                createEnhancedLighting();
-                
-                updateLoadingProgress(5, 'Building sky system...');
-                
-                // Create realistic sky
-                createRealisticSky();
-                
-                updateLoadingProgress(6, 'Generating terrain...');
-                
-                // Create ground with enhanced materials
-                createEnhancedGround();
-                
-                updateLoadingProgress(7, 'Creating squirrel character...');
-                
-                // Create enhanced squirrel
-                createEnhancedSquirrel();
-                
-                updateLoadingProgress(8, 'Setting up particle systems...');
-                
-                // Create particle systems
-                createParticleSystems();
-                
-                updateLoadingProgress(9, 'Configuring GUI...');
-                
-                // Setup GUI
-                setupGUI();
-                
-                updateLoadingProgress(10, 'Finalizing setup...');
-                
-                // Start game loop
-                animate();
-                
-                // Hide loading screen
-                setTimeout(() => {
-                    document.getElementById('loadingScreen').style.display = 'none';
-                    gameRunning = true;
-                }, 500);
-                
-            } catch (error) {
-                showError('Failed to initialize game: ' + error.message, error);
-            }
-        }
+            // Create scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x000000, 10, 200);
 
-        function createPostProcessing() {
-            try {
-                // Create effect composer
-                composer = new THREE.EffectComposer(renderer);
+            // Create camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 10);
 
-                // Add render pass
-                const renderPass = new THREE.RenderPass(scene, camera);
-                composer.addPass(renderPass);
+            // Create renderer with enhanced settings
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('gameCanvas'), 
+                antialias: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            renderer.outputEncoding = THREE.sRGBEncoding;
 
-                // Add bloom pass for magical effects
-                const bloomPass = new THREE.UnrealBloomPass(
-                    new THREE.Vector2(window.innerWidth, window.innerHeight),
-                    bloomParams.bloomStrength,
-                    bloomParams.bloomRadius,
-                    bloomParams.bloomThreshold
-                );
-                composer.addPass(bloomPass);
+            // Create post-processing pipeline
+            createPostProcessing();
 
-                // Add SSAO for realistic depth
-                const ssaoPass = new THREE.SSAOPass(
-                    scene,
-                    camera,
-                    window.innerWidth,
-                    window.innerHeight
-                );
-                ssaoPass.kernelRadius = 8;
-                ssaoPass.minDistance = 0.005;
-                ssaoPass.maxDistance = 0.1;
-                composer.addPass(ssaoPass);
-
-                // Add FXAA for anti-aliasing
-                const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
-                fxaaPass.material.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
-                composer.addPass(fxaaPass);
-
-                // Set final pass
-                composer.passes[composer.passes.length - 1].renderToScreen = true;
-            } catch (error) {
-                console.warn('Post-processing not available:', error);
-                // Fallback to basic rendering
-                composer = null;
-            }
-        }
-
-        function createEnhancedLighting() {
+            // Create enhanced lighting
             createEnhancedLighting();
 
-            // Create realistic sky
-            createRealisticSky();
+            // Create skybox
+            createSkybox();
 
             // Create ground with enhanced materials
             createEnhancedGround();
@@ -767,9 +392,6 @@
             // Create particle systems
             createParticleSystems();
 
-            // Setup GUI
-            setupGUI();
-
             // Start game loop
             animate();
 
@@ -779,98 +401,85 @@
         }
 
         function createPostProcessing() {
-            // Create effect composer
-            composer = new THREE.EffectComposer(renderer);
-
-            // Add render pass
-            const renderPass = new THREE.RenderPass(scene, camera);
-            composer.addPass(renderPass);
-
-            // Add bloom pass for magical effects
-            const bloomPass = new THREE.UnrealBloomPass(
-                new THREE.Vector2(window.innerWidth, window.innerHeight),
-                bloomParams.bloomStrength,
-                bloomParams.bloomRadius,
-                bloomParams.bloomThreshold
-            );
-            composer.addPass(bloomPass);
-
-            // Add SSAO for realistic depth
-            const ssaoPass = new THREE.SSAOPass(
-                scene,
-                camera,
-                window.innerWidth,
-                window.innerHeight
-            );
-            ssaoPass.kernelRadius = 8;
-            ssaoPass.minDistance = 0.005;
-            ssaoPass.maxDistance = 0.1;
-            composer.addPass(ssaoPass);
-
-            // Add FXAA for anti-aliasing
-            const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
-            fxaaPass.material.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
-            composer.addPass(fxaaPass);
-
-            // Set final pass
-            composer.passes[composer.passes.length - 1].renderToScreen = true;
+            // This would require EffectComposer - simplified for now
+            // In a full implementation, you'd add bloom, DOF, color grading, etc.
         }
 
         function createEnhancedLighting() {
-            // Ambient light
-            const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+            // Ambient light with CMYK minimal colors
+            const ambientColor = new THREE.Color(0x1a1a1a);
+            const ambientLight = new THREE.AmbientLight(ambientColor, 0.6);
             scene.add(ambientLight);
 
-            // Warm sunset light
-            const sunLight = new THREE.DirectionalLight(0xffa500, 1.0);
-            sunLight.position.set(20, 30, 10);
-            sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 4096;
-            sunLight.shadow.mapSize.height = 4096;
-            sunLight.shadow.camera.near = 0.5;
-            sunLight.shadow.camera.far = 200;
-            sunLight.shadow.camera.left = -50;
-            sunLight.shadow.camera.right = 50;
-            sunLight.shadow.camera.top = 50;
-            sunLight.shadow.camera.bottom = -50;
-            scene.add(sunLight);
+            // Main directional light (cyan)
+            const sunColor = new THREE.Color(0x00ffff);
+            const directionalLight = new THREE.DirectionalLight(sunColor, 0.8);
+            directionalLight.position.set(20, 30, 10);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            directionalLight.shadow.camera.near = 0.5;
+            directionalLight.shadow.camera.far = 200;
+            directionalLight.shadow.camera.left = -50;
+            directionalLight.shadow.camera.right = 50;
+            directionalLight.shadow.camera.top = 50;
+            directionalLight.shadow.camera.bottom = -50;
+            scene.add(directionalLight);
 
-            // Cool sky fill light
-            const fillLight = new THREE.DirectionalLight(0x87ceeb, 0.3);
-            fillLight.position.set(-20, 10, -10);
-            scene.add(fillLight);
-
-            // Rim lighting for dramatic effect
-            const rimLight = new THREE.DirectionalLight(0xff6b35, 0.5);
-            rimLight.position.set(0, 10, -20);
+            // Rim light for dramatic effect (magenta)
+            const rimLight = new THREE.DirectionalLight(0xff00ff, 0.4);
+            rimLight.position.set(-20, 10, -10);
             scene.add(rimLight);
 
             // Store sun reference for animation
-            sun = sunLight;
+            sun = directionalLight;
         }
 
-        function createRealisticSky() {
-            // Create sky
-            sky = new THREE.Sky();
-            sky.scale.setScalar(450000);
-            scene.add(sky);
-
-            // Configure sky
-            const skyUniforms = sky.material.uniforms;
-            skyUniforms['turbidity'].value = 10;
-            skyUniforms['rayleigh'].value = 2;
-            skyUniforms['mieCoefficient'].value = 0.005;
-            skyUniforms['mieDirectionalG'].value = 0.8;
-            skyUniforms['sunPosition'].value.set(0, 1, 0);
-
-            // Animate sun position
-            const sunSphere = new THREE.Mesh(
-                new THREE.SphereGeometry(450000, 16, 8),
-                new THREE.MeshBasicMaterial({ color: 0xffffff })
-            );
-            sunSphere.position.y = -700000;
-            sunSphere.visible = false;
-            scene.add(sunSphere);
+        function createSkybox() {
+            // Create minimal CMYK skybox
+            const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+            const skyMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    sunPosition: { value: new THREE.Vector3(20, 30, 10) }
+                },
+                vertexShader: `
+                    varying vec3 vWorldPosition;
+                    void main() {
+                        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+                        vWorldPosition = worldPosition.xyz;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform float time;
+                    uniform vec3 sunPosition;
+                    varying vec3 vWorldPosition;
+                    
+                    void main() {
+                        vec3 direction = normalize(vWorldPosition);
+                        float elevation = direction.y;
+                        
+                        // CMYK minimal gradient
+                        vec3 horizonColor = vec3(0.0, 1.0, 1.0); // Cyan
+                        vec3 zenithColor = vec3(0.0, 0.0, 0.0);   // Black
+                        vec3 skyColor = mix(horizonColor, zenithColor, smoothstep(0.0, 1.0, elevation));
+                        
+                        // Add sun disc (magenta)
+                        vec3 sunDir = normalize(sunPosition);
+                        float sunDot = dot(direction, sunDir);
+                        if (sunDot > 0.99) {
+                            skyColor = vec3(1.0, 0.0, 1.0); // Magenta
+                        }
+                        
+                        gl_FragColor = vec4(skyColor, 1.0);
+                    }
+                },
+                side: THREE.BackSide
+            });
+            
+            skybox = new THREE.Mesh(skyGeometry, skyMaterial);
+            scene.add(skybox);
         }
 
         function createEnhancedGround() {
@@ -886,10 +495,11 @@
                     8
                 );
                 const branchMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x8B4513,
-                    roughness: 0.8,
-                    metalness: 0.1,
-                    normalScale: new THREE.Vector2(0.5, 0.5)
+                    color: new THREE.Color(0x1a1a1a),
+                    roughness: 0.9,
+                    metalness: 0.0,
+                    emissive: new THREE.Color(0x00ffff),
+                    emissiveIntensity: 0.1
                 });
                 const branch = new THREE.Mesh(branchGeometry, branchMaterial);
                 branch.position.y = -1;
@@ -924,13 +534,13 @@
                 scene.add(branchGroup);
             }
 
-            // Create lane markers
+            // Create lane markers with CMYK minimal materials
             for (let i = 0; i < 3; i++) {
-                const lineGeometry = new THREE.PlaneGeometry(0.2, 1000);
+                const lineGeometry = new THREE.PlaneGeometry(0.3, 1000);
                 const lineMaterial = new THREE.MeshStandardMaterial({ 
-                    color: 0x654321,
-                    emissive: 0x321000,
-                    emissiveIntensity: 0.2
+                    color: 0x000000,
+                    emissive: 0x00ffff,
+                    emissiveIntensity: 0.3
                 });
                 const line = new THREE.Mesh(lineGeometry, lineMaterial);
                 line.rotation.x = -Math.PI / 2;
@@ -943,13 +553,14 @@
         function createEnhancedSquirrel() {
             const squirrelGroup = new THREE.Group();
 
-            // Enhanced body with PBR material
+            // Enhanced body with CMYK minimal material
             const bodyGeometry = new THREE.SphereGeometry(0.5, 12, 8);
             const bodyMaterial = new THREE.MeshStandardMaterial({
-                color: 0x8B4513,
-                roughness: 0.7,
-                metalness: 0.1,
-                normalScale: new THREE.Vector2(0.5, 0.5)
+                color: 0x000000,
+                roughness: 0.8,
+                metalness: 0.0,
+                emissive: new THREE.Color(0xff00ff),
+                emissiveIntensity: 0.2
             });
             const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
             body.position.y = 0.5;
@@ -963,12 +574,14 @@
             head.castShadow = true;
             squirrelGroup.add(head);
 
-            // Enhanced tail
+            // Enhanced tail with CMYK minimal material
             const tailGeometry = new THREE.ConeGeometry(0.2, 1, 8);
             const tailMaterial = new THREE.MeshStandardMaterial({
-                color: 0x654321,
+                color: 0x000000,
                 roughness: 0.9,
-                metalness: 0.0
+                metalness: 0.0,
+                emissive: new THREE.Color(0x00ffff),
+                emissiveIntensity: 0.15
             });
             const tail = new THREE.Mesh(tailGeometry, tailMaterial);
             tail.position.set(0, 0.8, -0.8);
@@ -976,9 +589,13 @@
             tail.castShadow = true;
             squirrelGroup.add(tail);
 
-            // Add eyes
+            // Add eyes (cyan)
             const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 6);
-            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            const eyeMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x00ffff,
+                emissive: 0x00ffff,
+                emissiveIntensity: 0.5
+            });
             const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
             const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
             leftEye.position.set(-0.1, 1.3, 0.4);
@@ -1040,14 +657,14 @@
         function createEnhancedObstacle() {
             const obstacleGroup = new THREE.Group();
             
-            // Enhanced spike with PBR material
+            // Enhanced spike with CMYK minimal material
             const spikeGeometry = new THREE.ConeGeometry(0.3, 1.5, 8);
             const spikeMaterial = new THREE.MeshStandardMaterial({
-                color: 0x8B0000,
-                roughness: 0.3,
-                metalness: 0.7,
-                emissive: 0x220000,
-                emissiveIntensity: 0.1
+                color: 0x000000,
+                roughness: 0.2,
+                metalness: 0.8,
+                emissive: 0xff0000,
+                emissiveIntensity: 0.3
             });
             const spike = new THREE.Mesh(spikeGeometry, spikeMaterial);
             spike.position.y = 0.75;
@@ -1057,21 +674,23 @@
             // Enhanced base
             const baseGeometry = new THREE.CylinderGeometry(0.2, 0.3, 0.3, 8);
             const baseMaterial = new THREE.MeshStandardMaterial({
-                color: 0x654321,
-                roughness: 0.8,
-                metalness: 0.1
+                color: 0x1a1a1a,
+                roughness: 0.9,
+                metalness: 0.0,
+                emissive: 0x00ffff,
+                emissiveIntensity: 0.1
             });
             const base = new THREE.Mesh(baseGeometry, baseMaterial);
             base.position.y = 0.15;
             base.castShadow = true;
             obstacleGroup.add(base);
 
-            // Add warning glow
+            // Add warning glow (yellow)
             const glowGeometry = new THREE.SphereGeometry(0.8, 8, 6);
             const glowMaterial = new THREE.MeshBasicMaterial({
-                color: 0xff0000,
+                color: 0xffff00,
                 transparent: true,
-                opacity: 0.2
+                opacity: 0.3
             });
             const glow = new THREE.Mesh(glowGeometry, glowMaterial);
             glow.position.y = 0.5;
@@ -1085,14 +704,14 @@
         function createEnhancedAcorn() {
             const acornGroup = new THREE.Group();
             
-            // Enhanced acorn body with PBR material
+            // Enhanced acorn body with CMYK minimal material
             const acornGeometry = new THREE.SphereGeometry(0.2, 12, 8);
             const acornMaterial = new THREE.MeshStandardMaterial({
-                color: 0x8B4513,
-                roughness: 0.6,
-                metalness: 0.2,
-                emissive: 0x4a2c00,
-                emissiveIntensity: 0.1
+                color: 0x000000,
+                roughness: 0.4,
+                metalness: 0.3,
+                emissive: 0xffff00,
+                emissiveIntensity: 0.4
             });
             const acorn = new THREE.Mesh(acornGeometry, acornMaterial);
             acorn.position.y = 1.5;
@@ -1102,21 +721,23 @@
             // Enhanced acorn cap
             const capGeometry = new THREE.ConeGeometry(0.15, 0.3, 8);
             const capMaterial = new THREE.MeshStandardMaterial({
-                color: 0x654321,
+                color: 0x1a1a1a,
                 roughness: 0.8,
-                metalness: 0.1
+                metalness: 0.0,
+                emissive: 0x00ffff,
+                emissiveIntensity: 0.2
             });
             const cap = new THREE.Mesh(capGeometry, capMaterial);
             cap.position.set(0, 1.65, 0);
             cap.castShadow = true;
             acornGroup.add(cap);
 
-            // Add golden glow
+            // Add yellow glow
             const glowGeometry = new THREE.SphereGeometry(0.3, 8, 6);
             const glowMaterial = new THREE.MeshBasicMaterial({
-                color: 0xffd700,
+                color: 0xffff00,
                 transparent: true,
-                opacity: 0.3
+                opacity: 0.4
             });
             const glow = new THREE.Mesh(glowGeometry, glowMaterial);
             glow.position.y = 1.5;
@@ -1125,31 +746,6 @@
             acornGroup.position.set((Math.random() - 0.5) * 6, 0, -50);
             acorns.push(acornGroup);
             scene.add(acornGroup);
-        }
-
-        function setupGUI() {
-            gui = new lil.GUI();
-            gui.add(bloomParams, 'exposure', 0.1, 2).onChange(value => {
-                renderer.toneMappingExposure = value;
-            });
-            gui.add(bloomParams, 'bloomStrength', 0, 3).onChange(value => {
-                composer.passes[1].strength = value;
-            });
-            gui.add(bloomParams, 'bloomThreshold', 0, 1).onChange(value => {
-                composer.passes[1].threshold = value;
-            });
-            gui.add(bloomParams, 'bloomRadius', 0, 1).onChange(value => {
-                composer.passes[1].radius = value;
-            });
-
-            // Sky controls
-            if (sky) {
-                const skyFolder = gui.addFolder('Sky');
-                skyFolder.add(sky.material.uniforms['turbidity'], 'value', 0, 20).name('Turbidity');
-                skyFolder.add(sky.material.uniforms['rayleigh'], 'value', 0, 4).name('Rayleigh');
-                skyFolder.add(sky.material.uniforms['mieCoefficient'], 'value', 0, 0.1).name('Mie Coefficient');
-                skyFolder.add(sky.material.uniforms['mieDirectionalG'], 'value', 0, 1).name('Mie Directional G');
-            }
         }
 
         function updateEnhancedSquirrel() {
@@ -1227,14 +823,8 @@
                     score += 150 * combo;
                     acornCount++;
                     
-                    // Award coins
-                    let coinReward = 10;
-                    if (premiumFeatures.doubleCoins) coinReward *= 2;
-                    coins += coinReward;
-                    
                     // Show floating text
                     showFloatingText('+' + (150 * combo), acorn.position);
-                    showFloatingText('+' + coinReward + ' coins', acorn.position.clone().add(new THREE.Vector3(0, 0.5, 0)));
                     
                     // Screen flash
                     showScreenFlash();
@@ -1295,13 +885,10 @@
                 10
             );
 
-            // Update sky
-            if (sky) {
-                sky.material.uniforms['sunPosition'].value.set(
-                    Math.cos(sunAngle) * 30,
-                    Math.sin(sunAngle) * 30 + 10,
-                    10
-                );
+            // Update skybox
+            if (skybox && skybox.material.uniforms) {
+                skybox.material.uniforms.time.value = timeOfDay;
+                skybox.material.uniforms.sunPosition.value.copy(sun.position);
             }
 
             // Update fog color based on time
@@ -1347,7 +934,6 @@
             document.getElementById('distance').textContent = Math.floor(distance);
             document.getElementById('acorns').textContent = acornCount;
             document.getElementById('combo').textContent = combo + 'x';
-            document.getElementById('coins').textContent = coins;
 
             // Show combo display
             if (combo > 1) {
@@ -1373,18 +959,6 @@
             
             // Add camera shake on game over
             addCameraShake(0.3, 0.5);
-            
-            // Show ad after game over (if not premium)
-            if (!premiumFeatures.noAds && adCooldown <= 0) {
-                setTimeout(() => {
-                    showAd().then(() => {
-                        // Award bonus coins for watching ad
-                        coins += 50;
-                        updateUI();
-                    });
-                }, 2000);
-                adCooldown = 300; // 5 minutes cooldown
-            }
         }
 
         function restartGame() {
@@ -1481,8 +1055,8 @@
             // Look at squirrel with slight look-ahead
             camera.lookAt(squirrel.position.x, squirrel.position.y, squirrel.position.z - 2);
 
-            // Render with post-processing
-            composer.render();
+            // Render the scene
+            renderer.render(scene, camera);
         }
 
         // Event listeners
@@ -1515,7 +1089,6 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            composer.setSize(window.innerWidth, window.innerHeight);
         });
 
         // Start the game when page loads

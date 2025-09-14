@@ -1,17 +1,20 @@
-# 🐿️ Squirrel Dash - 3D Endless Runner
+# 🐿️ Squirrel Rush - 3D Endless Runner
 
 A high-speed 3D endless runner game where players control a squirrel navigating through treetop branches, collecting acorns and avoiding obstacles.
 
 ## Features
 
-- **3D Graphics**: Built with Three.js for smooth 3D gameplay
+- **3D Graphics**: Built with Three.js and advanced post-processing
 - **Branch Navigation**: Three-lane system on tree branches
 - **Dynamic Obstacles**: Spikes and hazards that require quick reflexes  
-- **Collectibles**: Acorns that boost your score
+- **Collectibles**: Acorns that boost your score with combo system
 - **Leaderboard**: Global high scores with real-time updates
 - **Responsive Design**: Works on desktop and mobile devices
-- **Sound Effects**: Web Audio API powered sound system
-- **Local Storage**: Persistent high scores and settings
+- **Advanced Lighting**: Realistic sun positioning and atmospheric effects
+- **Post-Processing**: Bloom, SSAO, and tone mapping for cinematic visuals
+- **Realistic Sky**: Dynamic sky system with atmospheric scattering
+- **Particle Systems**: Floating leaves, dust, and magical effects
+- **Real-time GUI**: Lil-GUI for tweaking effects during development
 
 ## Technology Stack
 
