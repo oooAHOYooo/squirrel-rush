@@ -419,9 +419,11 @@
                             <span id="acorns">0</span></div>
                         <div style="font-size: 0.9rem; opacity: 0.8;">Combo:
                             <span id="combo">1x</span></div>
-                        <div style="font-size: 0.9rem; opacity: 0.8;">Coins:
-                            <span id="coins">0</span></div>
-                    </div>
+            <div style="font-size: 0.9rem; opacity: 0.8;">Coins:
+                <span id="coins">0</span></div>
+            <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 5px;">Speed:
+                <span id="speed" style="color: #00ffff;">0</span> mph</div>
+            </div>
                     <div style="margin-top: 10px;">
                         <button onclick="showShop()"
                             style="padding: 5px 10px; background: #ff00ff; color: black; border: none; border-radius: 3px; font-size: 0.8rem;">Shop</button>
@@ -512,6 +514,9 @@
         let timeOfDay = 0;
         let cameraShake = { x: 0, y: 0, z: 0 };
         let cameraTarget = { x: 0, y: 2, z: 8 };
+        let speedLines = [];
+        let speedEffect = 0;
+        let maxSpeed = 0.5;
         let sun, moon, stars, skybox, sky;
         let windDirection = new THREE.Vector3(1, 0, 0);
         let windStrength = 0.5;
@@ -1174,6 +1179,9 @@
                 scene.add(leaf);
             }
 
+            // Create speed lines for speed sensation
+            createSpeedLines();
+
             // Dust motes
             const dustGeometry = new THREE.SphereGeometry(0.02, 4, 4);
             const dustMaterial = new THREE.MeshBasicMaterial({
@@ -1192,6 +1200,53 @@
                 particles.push(dust);
                 scene.add(dust);
             }
+        }
+
+        function createSpeedLines() {
+            // Create speed lines for visual speed effect
+            for (let i = 0; i < 20; i++) {
+                const lineGeometry = new THREE.BufferGeometry();
+                const lineMaterial = new THREE.LineBasicMaterial({
+                    color: 0x00ffff,
+                    transparent: true,
+                    opacity: 0.3,
+                    linewidth: 2
+                });
+                
+                const points = [];
+                points.push(new THREE.Vector3(
+                    (Math.random() - 0.5) * 20,
+                    Math.random() * 10 + 2,
+                    10 + Math.random() * 20
+                ));
+                points.push(new THREE.Vector3(
+                    (Math.random() - 0.5) * 20,
+                    Math.random() * 10 + 2,
+                    -20 - Math.random() * 20
+                ));
+                
+                lineGeometry.setFromPoints(points);
+                const line = new THREE.Line(lineGeometry, lineMaterial);
+                line.userData = {
+                    speed: 0.1 + Math.random() * 0.2,
+                    resetZ: 30
+                };
+                speedLines.push(line);
+                scene.add(line);
+            }
+        }
+
+        function updateSpeedLines() {
+            speedLines.forEach(line => {
+                line.position.z -= line.userData.speed * gameSpeed * 10;
+                line.material.opacity = Math.min(0.8, gameSpeed * 2);
+                
+                if (line.position.z < -50) {
+                    line.position.z = line.userData.resetZ;
+                    line.position.x = (Math.random() - 0.5) * 20;
+                    line.position.y = Math.random() * 10 + 2;
+                }
+            });
         }
 
         function createEnhancedObstacle() {
@@ -1413,13 +1468,15 @@
         }
 
         function updateParticleSystems() {
-            // Animate floating leaves
+            const speedIntensity = Math.min(1, gameSpeed * 2);
+            
+            // Animate floating leaves with speed effects
             particles.forEach((particle, index) => {
                 if (particle.geometry.type === 'PlaneGeometry') {
-                    // Leaves
-                    particle.position.z += windDirection.z * windStrength * 0.01;
-                    particle.position.x += windDirection.x * windStrength * 0.01;
-                    particle.rotation.z += 0.01;
+                    // Leaves with enhanced wind effect
+                    particle.position.z += windDirection.z * windStrength * 0.01 + speedIntensity * 0.05;
+                    particle.position.x += windDirection.x * windStrength * 0.01 + Math.sin(Date.now() * 0.002 + particle.position.z) * speedIntensity * 0.01;
+                    particle.rotation.z += 0.01 + speedIntensity * 0.02;
                     
                     // Reset if too far
                     if (particle.position.z > 50) {
@@ -1505,6 +1562,10 @@
             document.getElementById('acorns').textContent = acornCount;
             document.getElementById('combo').textContent = combo + 'x';
             document.getElementById('coins').textContent = coins;
+            
+            // Update speed display
+            const speedMph = Math.floor(gameSpeed * 100);
+            document.getElementById('speed').textContent = speedMph;
 
             // Show combo display
             if (combo > 1) {
@@ -1629,6 +1690,7 @@
                 updateEnhancedObstacles();
                 updateEnhancedAcorns();
                 updateParticleSystems();
+                updateSpeedLines();
                 updateTimeOfDay();
                 updateCombo();
 
@@ -1648,13 +1710,21 @@
                 updateUI();
             }
 
-            // Update camera with shake
-            camera.position.x = cameraTarget.x + cameraShake.x * (Math.random() - 0.5);
-            camera.position.y = cameraTarget.y + cameraShake.y * (Math.random() - 0.5);
-            camera.position.z = cameraTarget.z + cameraShake.z * (Math.random() - 0.5);
+            // Update camera with shake and speed effects
+            const speedIntensity = Math.min(1, gameSpeed * 2);
+            const speedShake = speedIntensity * 0.1;
+            
+            camera.position.x = cameraTarget.x + cameraShake.x * (Math.random() - 0.5) + speedShake * (Math.random() - 0.5);
+            camera.position.y = cameraTarget.y + cameraShake.y * (Math.random() - 0.5) + speedShake * (Math.random() - 0.5);
+            camera.position.z = cameraTarget.z + cameraShake.z * (Math.random() - 0.5) - speedIntensity * 2;
 
-            // Look at squirrel with slight look-ahead
-            camera.lookAt(squirrel.position.x, squirrel.position.y, squirrel.position.z - 2);
+            // Dynamic FOV based on speed
+            camera.fov = 75 + speedIntensity * 15;
+            camera.updateProjectionMatrix();
+
+            // Look at squirrel with speed-based look-ahead
+            const lookAhead = 2 + speedIntensity * 3;
+            camera.lookAt(squirrel.position.x, squirrel.position.y, squirrel.position.z - lookAhead);
 
             // Render with or without post-processing
             if (composer) {
