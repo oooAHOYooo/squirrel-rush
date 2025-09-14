@@ -229,13 +229,65 @@
         }
 
         .retry-button {
-            background: #ff00ff;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
             color: #000;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 15px 30px;
+            border-radius: 25px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 255, 0.5);
+        }
+
+        /* iPad and mobile optimizations */
+        @media (max-width: 1024px) {
+            .ui-panel {
+                font-size: 1.2rem;
+                padding: 15px;
+            }
+            
+            .score-panel {
+                top: 10px;
+                right: 10px;
+                font-size: 1.1rem;
+            }
+            
+            .controls-panel {
+                top: 10px;
+                right: 10px;
+                font-size: 1rem;
+                max-width: 200px;
+            }
+            
+            .loading-text {
+                font-size: 2rem;
+            }
+            
+            .loading-status {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Touch device specific styles */
+        @media (hover: none) and (pointer: coarse) {
+            .ui-panel {
+                font-size: 1.3rem;
+                padding: 20px;
+            }
+            
+            .play-button, .back-button {
+                padding: 20px 40px;
+                font-size: 1.3rem;
+                min-height: 60px;
+            }
         }
 
         .combo-display {
@@ -465,20 +517,30 @@
         let windStrength = 0.5;
         let gui;
 
+        // Touch controls for iPad
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isTouchDevice = false;
+        let touchControls = {
+            left: false,
+            right: false,
+            jump: false
+        };
+
         // Loading and error handling
         let loadingProgress = 0;
         let loadingSteps = [
-            'Initializing Three.js...',
-            'Creating scene and camera...',
-            'Setting up renderer...',
-            'Loading post-processing...',
-            'Creating lighting system...',
-            'Building sky system...',
-            'Generating terrain...',
-            'Creating squirrel character...',
-            'Setting up particle systems...',
-            'Configuring GUI...',
-            'Finalizing setup...'
+            '🐿️ Waking up the squirrels...',
+            '🌳 Planting virtual trees...',
+            '🎨 Mixing CMYK colors...',
+            '✨ Skipping fancy shaders (squirrels prefer simple!)',
+            '💡 Turning on the forest lights...',
+            '🌅 Painting the sky...',
+            '🛤️ Building branch highways...',
+            '🐿️ Crafting the main squirrel...',
+            '🍃 Summoning floating leaves...',
+            '🎛️ Setting up control panels...',
+            '🎮 Almost ready to rush!'
         ];
         let currentStep = 0;
         let loadingErrors = [];
@@ -523,7 +585,28 @@
             loadingErrors.push({ message, error });
             console.error('Loading Error:', message, error);
             
-            document.getElementById('errorMessage').textContent = message;
+            // Funny error messages
+            const funnyMessages = [
+                "🐿️ Oops! The squirrels got confused!",
+                "🌳 The trees are having an identity crisis!",
+                "🎨 The CMYK colors are fighting!",
+                "✨ The magic sparkles went on strike!",
+                "💡 The forest lights are taking a coffee break!",
+                "🌅 The sky painter is on vacation!",
+                "🛤️ The branch highway is under construction!",
+                "🐿️ The main squirrel is having a mid-life crisis!",
+                "🍃 The floating leaves got lost in the wind!",
+                "🎛️ The control panels are rebelling!",
+                "🎮 The game engine is having a tantrum!"
+            ];
+            
+            const randomMessage = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+            
+            document.getElementById('errorMessage').innerHTML = `
+                <div style="color: #ff00ff; font-size: 1.2rem; margin-bottom: 10px;">${randomMessage}</div>
+                <div style="color: #00ffff; font-size: 0.9rem;">${message}</div>
+                <div style="color: #ffff00; font-size: 0.8rem; margin-top: 10px;">Don't worry, the squirrels are working on it! 🐿️</div>
+            `;
             document.getElementById('errorMessage').style.display = 'block';
             document.getElementById('retryButton').style.display = 'block';
             
@@ -663,10 +746,11 @@
                 renderer.toneMappingExposure = 1.2;
                 renderer.outputEncoding = THREE.sRGBEncoding;
                 
-                updateLoadingProgress(3, 'Loading post-processing...');
+                updateLoadingProgress(3, 'Skipping fancy shaders (squirrels prefer simple!)...');
                 
-                // Create post-processing pipeline
-                createPostProcessing();
+                // Skip post-processing to avoid shader issues
+                console.log('🐿️ Post-processing disabled - the squirrels think simple is better!');
+                composer = null;
                 
                 updateLoadingProgress(4, 'Creating lighting system...');
                 
@@ -698,7 +782,12 @@
                 // Setup GUI
                 setupGUI();
                 
-                updateLoadingProgress(10, 'Finalizing setup...');
+                updateLoadingProgress(10, 'Setting up touch controls...');
+                
+                // Initialize touch controls for iPad
+                initTouchControls();
+                
+                updateLoadingProgress(11, 'Finalizing setup...');
                 
                 // Start game loop
                 animate();
@@ -716,6 +805,11 @@
 
         function createPostProcessing() {
             try {
+                // Skip post-processing for now to avoid shader issues
+                console.log('Skipping post-processing - the squirrels prefer simple graphics! 🐿️');
+                composer = null;
+                return;
+                
                 // Check if post-processing modules are available
                 if (typeof THREE.EffectComposer === 'undefined') {
                     throw new Error('EffectComposer not loaded - the squirrels are confused! 🐿️');
@@ -1479,6 +1573,24 @@
             requestAnimationFrame(animate);
 
             if (gameRunning) {
+                // Handle touch controls
+                if (isTouchDevice) {
+                    if (touchControls.left && currentLane > 0) {
+                        currentLane--;
+                        touchControls.left = false; // Reset after use
+                    }
+                    if (touchControls.right && currentLane < 2) {
+                        currentLane++;
+                        touchControls.right = false; // Reset after use
+                    }
+                    if (touchControls.jump && !isJumping) {
+                        isJumping = true;
+                        jumpSpeed = 0.3;
+                        addCameraShake(0.05, 0.1);
+                        touchControls.jump = false; // Reset after use
+                    }
+                }
+
                 // Update game elements
                 updateEnhancedSquirrel();
                 updateEnhancedObstacles();
@@ -1511,8 +1623,139 @@
             // Look at squirrel with slight look-ahead
             camera.lookAt(squirrel.position.x, squirrel.position.y, squirrel.position.z - 2);
 
-            // Render with post-processing
-            composer.render();
+            // Render with or without post-processing
+            if (composer) {
+                composer.render();
+            } else {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // Touch control functions
+        function initTouchControls() {
+            isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            
+            if (isTouchDevice) {
+                console.log('🐿️ Touch device detected! Setting up squirrel-friendly controls!');
+                
+                // Add touch event listeners
+                document.addEventListener('touchstart', handleTouchStart, { passive: false });
+                document.addEventListener('touchend', handleTouchEnd, { passive: false });
+                document.addEventListener('touchmove', handleTouchMove, { passive: false });
+                
+                // Add touch control UI
+                addTouchControlUI();
+            }
+        }
+
+        function addTouchControlUI() {
+            const touchControlsDiv = document.createElement('div');
+            touchControlsDiv.id = 'touchControls';
+            touchControlsDiv.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 20px;
+                z-index: 1000;
+                pointer-events: none;
+            `;
+
+            // Left button
+            const leftBtn = createTouchButton('←', 'left');
+            leftBtn.style.background = 'linear-gradient(45deg, #ff00ff, #00ffff)';
+            
+            // Jump button
+            const jumpBtn = createTouchButton('↑', 'jump');
+            jumpBtn.style.background = 'linear-gradient(45deg, #00ffff, #ff00ff)';
+            jumpBtn.style.fontSize = '2rem';
+            
+            // Right button
+            const rightBtn = createTouchButton('→', 'right');
+            rightBtn.style.background = 'linear-gradient(45deg, #ff00ff, #00ffff)';
+
+            touchControlsDiv.appendChild(leftBtn);
+            touchControlsDiv.appendChild(jumpBtn);
+            touchControlsDiv.appendChild(rightBtn);
+            
+            document.body.appendChild(touchControlsDiv);
+        }
+
+        function createTouchButton(text, action) {
+            const button = document.createElement('div');
+            button.textContent = text;
+            button.style.cssText = `
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #000;
+                cursor: pointer;
+                pointer-events: auto;
+                user-select: none;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                transition: all 0.2s ease;
+                border: 3px solid rgba(255, 255, 255, 0.3);
+            `;
+            
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                button.style.transform = 'scale(0.9)';
+                button.style.opacity = '0.8';
+                touchControls[action] = true;
+            });
+            
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                button.style.transform = 'scale(1)';
+                button.style.opacity = '1';
+                touchControls[action] = false;
+            });
+            
+            return button;
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            touchControls.left = false;
+            touchControls.right = false;
+            touchControls.jump = false;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (e.touches.length === 0) return;
+            
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touchStartY - touch.clientY;
+            
+            // Swipe detection
+            if (Math.abs(deltaX) > 50) {
+                if (deltaX > 0) {
+                    touchControls.right = true;
+                    touchControls.left = false;
+                } else {
+                    touchControls.left = true;
+                    touchControls.right = false;
+                }
+            }
+            
+            if (deltaY > 50) {
+                touchControls.jump = true;
+            }
         }
 
         // Event listeners
