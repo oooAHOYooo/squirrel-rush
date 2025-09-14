@@ -426,29 +426,29 @@
                             <span id="speed" style="color: #00ffff;">0</span>
                             mph</div>
                     </div>
-                    <div style="margin-top: 10px;">
-                        <button onclick="showShop()"
-                            style="padding: 5px 10px; background: #ff00ff; color: black; border: none; border-radius: 3px; font-size: 0.8rem;">Shop</button>
-                        <button onclick="showAd()"
-                            style="padding: 5px 10px; background: #00ffff; color: black; border: none; border-radius: 3px; font-size: 0.8rem; margin-left: 5px;">Watch
-                            Ad</button>
+                    
+                    <!-- Controls moved below score -->
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                        <div style="font-size: 1rem; font-weight: bold; margin-bottom: 10px; color: #00ffff;">Controls:</div>
+                        <div style="font-size: 0.9rem; margin-bottom: 5px;">
+                            <span class="key">A/D</span> or <span class="key">←/→</span> Switch Lanes
+                        </div>
+                        <div style="font-size: 0.9rem; margin-bottom: 10px;">
+                            <span class="key">W</span> or <span class="key">↑</span> or <span class="key">Space</span> Jump
+                        </div>
+                        
+                        <!-- Shop buttons -->
+                        <div style="margin-top: 10px;">
+                            <button onclick="showShop()"
+                                style="padding: 8px 15px; background: linear-gradient(45deg, #ff00ff, #00ffff); color: black; border: none; border-radius: 5px; font-size: 0.9rem; font-weight: bold; margin-right: 8px; box-shadow: 0 2px 8px rgba(255, 0, 255, 0.3);">Shop</button>
+                            <button onclick="showAd()"
+                                style="padding: 8px 15px; background: linear-gradient(45deg, #00ffff, #ff00ff); color: black; border: none; border-radius: 5px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3);">Watch Ad</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="combo-display" id="comboDisplay"></div>
 
-                <div class="ui-panel controls-panel">
-                    <div class="controls-text">Controls:</div>
-                    <div class="control-keys">
-                        <div class="key">A/D</div>
-                        <div class="key">←/→</div>
-                        <span style="opacity: 0.6;">Switch Lanes</span>
-                        <div class="key">W</div>
-                        <div class="key">↑</div>
-                        <div class="key">Space</div>
-                        <span style="opacity: 0.6;">Jump</span>
-                    </div>
-                </div>
 
                 <div class="ui-panel game-over-panel" id="gameOverPanel">
                     <h2 style="margin-bottom: 20px; color: #00ffff;">Game
@@ -732,8 +732,8 @@
                 
                 // Create scene
                 scene = new THREE.Scene();
-                // Forest atmosphere with green-tinted fog
-                scene.fog = new THREE.FogExp2(0x4a7c59, 0.008);
+                // Enhanced forest atmosphere with depth and contrast
+                scene.fog = new THREE.FogExp2(0x2a4a39, 0.005);
                 
                 // Create camera
                 camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -949,12 +949,12 @@
         }
 
         function createEnhancedLighting() {
-            // Ambient light
-            const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+            // Enhanced ambient light for better contrast
+            const ambientLight = new THREE.AmbientLight(0x202020, 0.3);
             scene.add(ambientLight);
 
-            // Warm sunset light
-            const sunLight = new THREE.DirectionalLight(0xffa500, 1.0);
+            // Strong directional light for dramatic shadows
+            const sunLight = new THREE.DirectionalLight(0xffa500, 1.2);
             sunLight.position.set(20, 30, 10);
             sunLight.castShadow = true;
             sunLight.shadow.mapSize.width = 4096;
@@ -967,15 +967,20 @@
             sunLight.shadow.camera.bottom = -50;
             scene.add(sunLight);
 
-            // Cool sky fill light
-            const fillLight = new THREE.DirectionalLight(0x87ceeb, 0.3);
+            // Cool sky fill light for depth
+            const fillLight = new THREE.DirectionalLight(0x87ceeb, 0.4);
             fillLight.position.set(-20, 10, -10);
             scene.add(fillLight);
 
-            // Rim lighting for dramatic effect
-            const rimLight = new THREE.DirectionalLight(0xff6b35, 0.5);
+            // Enhanced rim lighting for speed contrast
+            const rimLight = new THREE.DirectionalLight(0xff6b35, 0.7);
             rimLight.position.set(0, 10, -20);
             scene.add(rimLight);
+
+            // Add speed-based lighting
+            const speedLight = new THREE.DirectionalLight(0x00ffff, 0.3);
+            speedLight.position.set(0, 5, 10);
+            scene.add(speedLight);
 
             // Store sun reference for animation
             sun = sunLight;
@@ -1183,6 +1188,9 @@
 
             // Create speed lines for speed sensation
             createSpeedLines();
+            
+            // Create 3D tunnel effect
+            createTunnelEffect();
 
             // Dust motes
             const dustGeometry = new THREE.SphereGeometry(0.02, 4, 4);
@@ -1205,50 +1213,83 @@
         }
 
         function createSpeedLines() {
-            // Create speed lines for visual speed effect
-            for (let i = 0; i < 20; i++) {
-                const lineGeometry = new THREE.BufferGeometry();
-                const lineMaterial = new THREE.LineBasicMaterial({
-                    color: 0x00ffff,
-                    transparent: true,
-                    opacity: 0.3,
-                    linewidth: 2
-                });
-                
-                const points = [];
-                points.push(new THREE.Vector3(
-                    (Math.random() - 0.5) * 20,
-                    Math.random() * 10 + 2,
-                    10 + Math.random() * 20
-                ));
-                points.push(new THREE.Vector3(
-                    (Math.random() - 0.5) * 20,
-                    Math.random() * 10 + 2,
-                    -20 - Math.random() * 20
-                ));
-                
-                lineGeometry.setFromPoints(points);
-                const line = new THREE.Line(lineGeometry, lineMaterial);
-                line.userData = {
-                    speed: 0.1 + Math.random() * 0.2,
-                    resetZ: 30
-                };
-                speedLines.push(line);
-                scene.add(line);
+            // Create 3D speed lines with depth and contrast
+            for (let i = 0; i < 30; i++) {
+                // Create multiple layers of speed lines for depth
+                for (let layer = 0; layer < 3; layer++) {
+                    const lineGeometry = new THREE.BufferGeometry();
+                    const lineMaterial = new THREE.LineBasicMaterial({
+                        color: layer === 0 ? 0x00ffff : layer === 1 ? 0x0080ff : 0x0040ff,
+                        transparent: true,
+                        opacity: 0.4 - layer * 0.1,
+                        linewidth: 3 - layer
+                    });
+                    
+                    const points = [];
+                    const depth = layer * 5;
+                    points.push(new THREE.Vector3(
+                        (Math.random() - 0.5) * (20 + layer * 10),
+                        Math.random() * 10 + 2,
+                        10 + Math.random() * 20 + depth
+                    ));
+                    points.push(new THREE.Vector3(
+                        (Math.random() - 0.5) * (20 + layer * 10),
+                        Math.random() * 10 + 2,
+                        -20 - Math.random() * 20 + depth
+                    ));
+                    
+                    lineGeometry.setFromPoints(points);
+                    const line = new THREE.Line(lineGeometry, lineMaterial);
+                    line.userData = {
+                        speed: 0.1 + Math.random() * 0.2 + layer * 0.1,
+                        resetZ: 30 + depth,
+                        layer: layer
+                    };
+                    speedLines.push(line);
+                    scene.add(line);
+                }
             }
         }
 
         function updateSpeedLines() {
+            const speedIntensity = Math.min(1, gameSpeed * 2);
+            
             speedLines.forEach(line => {
                 line.position.z -= line.userData.speed * gameSpeed * 10;
-                line.material.opacity = Math.min(0.8, gameSpeed * 2);
+                
+                // Layer-based opacity and blur effect
+                const layerOpacity = (0.4 - line.userData.layer * 0.1) * Math.min(0.8, speedIntensity * 2);
+                line.material.opacity = layerOpacity;
+                
+                // Add motion blur effect by scaling opacity based on speed
+                if (speedIntensity > 0.5) {
+                    line.material.opacity *= 0.7; // Simulate motion blur
+                }
                 
                 if (line.position.z < -50) {
                     line.position.z = line.userData.resetZ;
-                    line.position.x = (Math.random() - 0.5) * 20;
+                    line.position.x = (Math.random() - 0.5) * (20 + line.userData.layer * 10);
                     line.position.y = Math.random() * 10 + 2;
                 }
             });
+        }
+
+        function createTunnelEffect() {
+            // Create depth-based tunnel rings for 3D speed effect
+            for (let i = 0; i < 20; i++) {
+                const ringGeometry = new THREE.RingGeometry(15, 20, 16);
+                const ringMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x004080,
+                    transparent: true,
+                    opacity: 0.1,
+                    side: THREE.DoubleSide
+                });
+                const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                ring.position.z = -i * 10;
+                ring.rotation.x = Math.PI / 2;
+                ring.userData = { speed: 0.05 + i * 0.01 };
+                scene.add(ring);
+            }
         }
 
         function createEnhancedObstacle() {
@@ -1712,21 +1753,23 @@
                 updateUI();
             }
 
-            // Update camera with shake and speed effects
+            // Update camera with 3D speed effects and depth
             const speedIntensity = Math.min(1, gameSpeed * 2);
-            const speedShake = speedIntensity * 0.1;
+            const speedShake = speedIntensity * 0.15;
             
+            // Enhanced camera movement with 3D depth
             camera.position.x = cameraTarget.x + cameraShake.x * (Math.random() - 0.5) + speedShake * (Math.random() - 0.5);
-            camera.position.y = cameraTarget.y + cameraShake.y * (Math.random() - 0.5) + speedShake * (Math.random() - 0.5);
-            camera.position.z = cameraTarget.z + cameraShake.z * (Math.random() - 0.5) - speedIntensity * 2;
+            camera.position.y = cameraTarget.y + cameraShake.y * (Math.random() - 0.5) + speedShake * (Math.random() - 0.5) + speedIntensity * 0.5;
+            camera.position.z = cameraTarget.z + cameraShake.z * (Math.random() - 0.5) - speedIntensity * 3;
 
-            // Dynamic FOV based on speed
-            camera.fov = 75 + speedIntensity * 15;
+            // Dynamic FOV with depth of field effect
+            camera.fov = 75 + speedIntensity * 20;
             camera.updateProjectionMatrix();
 
-            // Look at squirrel with speed-based look-ahead
-            const lookAhead = 2 + speedIntensity * 3;
-            camera.lookAt(squirrel.position.x, squirrel.position.y, squirrel.position.z - lookAhead);
+            // Enhanced look-ahead with 3D perspective
+            const lookAhead = 2 + speedIntensity * 4;
+            const lookAheadY = speedIntensity * 0.5;
+            camera.lookAt(squirrel.position.x, squirrel.position.y + lookAheadY, squirrel.position.z - lookAhead);
 
             // Render with or without post-processing
             if (composer) {
