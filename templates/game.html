@@ -333,21 +333,24 @@
     </head>
     <body>
         <div id="gameContainer">
-        <div class="loading-screen" id="loadingScreen">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Loading Squirrel Rush...</div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
+            <div class="loading-screen" id="loadingScreen">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Squirrel Rush...</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="loading-status"
+                    id="loadingStatus">Initializing...</div>
+                <div class="error-message" id="errorMessage"></div>
+                <button class="retry-button" id="retryButton"
+                    onclick="retryLoading()"
+                    style="display: none;">Retry</button>
             </div>
-            <div class="loading-status" id="loadingStatus">Initializing...</div>
-            <div class="error-message" id="errorMessage"></div>
-            <button class="retry-button" id="retryButton" onclick="retryLoading()" style="display: none;">Retry</button>
-        </div>
 
-        <div class="debug-info" id="debugInfo">
-            <div>Debug Info:</div>
-            <div id="debugText">Loading...</div>
-        </div>
+            <div class="debug-info" id="debugInfo">
+                <div>Debug Info:</div>
+                <div id="debugText">Loading...</div>
+            </div>
 
             <canvas id="gameCanvas"></canvas>
 
@@ -368,8 +371,11 @@
                             <span id="coins">0</span></div>
                     </div>
                     <div style="margin-top: 10px;">
-                        <button onclick="showShop()" style="padding: 5px 10px; background: #ff00ff; color: black; border: none; border-radius: 3px; font-size: 0.8rem;">Shop</button>
-                        <button onclick="showAd()" style="padding: 5px 10px; background: #00ffff; color: black; border: none; border-radius: 3px; font-size: 0.8rem; margin-left: 5px;">Watch Ad</button>
+                        <button onclick="showShop()"
+                            style="padding: 5px 10px; background: #ff00ff; color: black; border: none; border-radius: 3px; font-size: 0.8rem;">Shop</button>
+                        <button onclick="showAd()"
+                            style="padding: 5px 10px; background: #00ffff; color: black; border: none; border-radius: 3px; font-size: 0.8rem; margin-left: 5px;">Watch
+                            Ad</button>
                     </div>
                 </div>
 
